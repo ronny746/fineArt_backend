@@ -11,7 +11,7 @@ const mongoose = require("mongoose");
 // ).then(() => console.log("connected to Database and running on port 3000")
 // );
 
-// const authRoute = require("./routes/auth");
+const authRoute = require("./routes/auth");
 
 // app.use("/api/auth", authRoute);
 
@@ -23,15 +23,16 @@ const PORT = 3000;
 // This middleware will not allow the
 // request to go beyond it
 app.use(function (req, res, next) {
-	console.log("Middleware called")
-	next();
+    console.log("Middleware called")
+    next();
 });
+app.get(authRoute);
 
 // Requests will never reach this route
-app.get('/user', function (req, res) {
-	console.log("/user request called");
-	res.send('Welcome to GeeksforGeeks');
-});
+// app.get(authRoute, function (req, res) {
+// 	console.log("/user request called");
+// 	res.send('Welcome to GeeksforGeeks');
+// });
 
 mongoose.connect('mongodb+srv://rohit:rana@cluster0.btddseq.mongodb.net/fineArt?retryWrites=true&w=majority',
     { useUnifiedTopology: true, useNewUrlParser: true },
