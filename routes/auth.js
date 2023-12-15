@@ -11,10 +11,10 @@ const secret_key = "Rana";
 //REGISTER
 router.post("/register", async (req, res) => {
     try {
-        const mobileNumber = "7380535912";
+        const mobile = req.body.mobileNumber;
 
         // Check if user already exists with the given mobile number
-        const existingUser = await User.findOne({ mobile: mobileNumber });
+        const existingUser = await User.findOne({ mobile: mobile });
 
         if (existingUser) {
             // User already exists, you might want to handle this case appropriately
@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000);
         const newUser = new User({
             name: req.body.name,
-            mobile: mobileNumber,
+            mobile: mobile,
             otp: otp
         });
 
@@ -35,7 +35,7 @@ router.post("/register", async (req, res) => {
         await client.messages.create({
             body: `Your OTP is: ${otp}`,
             from: twilioPhoneNumber,
-            to: "+91 " + mobileNumber
+            to: "+91 " + mobile
         })
             .then(message => {
                 console.log(`OTP sent successfully! ${otp}: ${message.sid}`);

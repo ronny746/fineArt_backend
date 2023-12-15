@@ -3,7 +3,7 @@ const express = require('express');
 const axios = require('axios');
 const mongoose = require("mongoose");
 const app = express();
-
+app.use(express.json());
 
 mongoose.connect('mongodb+srv://rohit:rana@cluster0.btddseq.mongodb.net/fineArt?retryWrites=true&w=majority',
     { useUnifiedTopology: true, useNewUrlParser: true },
@@ -14,6 +14,6 @@ mongoose.connect('mongodb+srv://rohit:rana@cluster0.btddseq.mongodb.net/fineArt?
 const authRoute = require("./routes/auth");
 
 app.use("/api/auth", authRoute);
-app.use(express.json());
+
 
 
