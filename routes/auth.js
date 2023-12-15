@@ -11,7 +11,7 @@ const secret_key = "Rana";
 //REGISTER
 router.post("/register", async (req, res) => {
     try {
-        const mobileNumber = req.body.mobileNumber;
+        const mobileNumber = "7380535912";
 
         // Check if user already exists with the given mobile number
         const existingUser = await User.findOne({ mobile: mobileNumber });
