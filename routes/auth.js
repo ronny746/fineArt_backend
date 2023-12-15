@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const User = require("../models/User");
+const User = require("../models/user");
 const accountSid = 'AC608c293f7cd37e13823f6a4256a9d25f';
 const authToken = 'ddbd5c157d5f8e27c4de68ed0771ac2e';
 const twilioPhoneNumber = '+12058289919';
