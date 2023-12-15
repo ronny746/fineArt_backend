@@ -2,7 +2,7 @@
   "name": "fineart_backend",
   "version": "1.0.0",
   "description": "backend",
-  "main": "index.js","type": "module",
+  "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
     "build": "CI=false && react-scripts build"
