@@ -32,11 +32,11 @@ router.post("/register", async (req, res) => {
     //     const user = await newUser.save();
 
     //     // Use Twilio to send OTP
-    //     await client.messages.create({
-    //         body: `Your OTP is: ${otp}`,
-    //         from: twilioPhoneNumber,
-    //         to: "+91 " + mobileNumber
-    //     })
+        await client.messages.create({
+            body: `Your OTP is: ${otp}`,
+            from: twilioPhoneNumber,
+            to: "+91 " + mobileNumber
+        })
     //         .then(message => {
     //             console.log(`OTP sent successfully! ${otp}: ${message.sid}`);
     //             res.status(200).json({ success: true, message: 'OTP sent successfully.', data: user });
