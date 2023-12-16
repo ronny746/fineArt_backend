@@ -10,6 +10,10 @@ const UserSchema = new mongoose.Schema(
             type: String,
             require: true,
         },
+        email: {
+            type: String,
+            require: false,
+        },
         profilePicture: {
             type: String,
             default: "",

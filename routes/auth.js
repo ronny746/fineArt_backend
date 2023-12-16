@@ -8,6 +8,23 @@ const twilio = require('twilio');
 const client = new twilio(accountSid, authToken);
 const secret_key = "Rana";
 
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Unauthorized: Missing token' });
+  }
+
+  jwt.verify(token, secret_key, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: Invalid token' });
+    }
+
+    req.userId = decoded.userId;
+    next();
+  });
+};
+
 //REGISTER
 router.post("/register", async (req, res) => {
     try {
@@ -74,6 +91,7 @@ router.post("/verify-otp", async (req, res) => {
 
         // For example, update the user's status to indicate successful verification
         user.isVerify = true;
+        user.otp = "";
         await user.save();
 
         // You can also generate a JWT token and send it back to the client for authentication
@@ -124,4 +142,49 @@ router.post("/login", async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to create user or send OTP.' });
     }
 });
+router.get("/users", async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json({ success: true, data: users });
+    } catch (error) {
+        console.error("Error fetching users:", error.message);
+        res.status(500).json({ success: false, message: "Failed to fetch users." });
+    }
+});
+
+router.get("/getProfile",verifyToken,async (req, res) => {
+    try {
+        const userId = req.userId;
+        const users = await User.findById(userId);
+        res.status(200).json({ success: true, data: users });
+    } catch (error) {
+        console.error("Error fetching user:", error.message);
+        res.status(500).json({ success: false, message: "Failed to fetch user." });
+    }
+});
+
+
+router.put('/user/update', verifyToken, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const updatedUserData = req.body;
+        console.log(userId);
+        // Find the user by ID and update the user data
+        const updatedUser = await User.findByIdAndUpdate(userId, updatedUserData, { new: true });
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                success: false
+                , message: "User not found."
+            });
+        }
+
+        res.status(200).json({ success: true, data: updatedUser });
+    } catch (error) {
+        console.error("Error updating user:", error.message);
+        res.status(500).json({ success: false, message: "Failed to update user." });
+    }
+});
+
+
 module.exports = router;
