@@ -9,20 +9,20 @@ const client = new twilio(accountSid, authToken);
 const secret_key = "Rana";
 
 const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Unauthorized: Missing token' });
-  }
-
-  jwt.verify(token, secret_key, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ success: false, message: 'Unauthorized: Invalid token' });
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Unauthorized: Missing token' });
     }
 
-    req.userId = decoded.userId;
-    next();
-  });
+    jwt.verify(token, secret_key, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ success: false, message: 'Unauthorized: Invalid token' });
+        }
+
+        req.userId = decoded.userId;
+        next();
+    });
 };
 
 //REGISTER
@@ -152,7 +152,7 @@ router.get("/users", async (req, res) => {
     }
 });
 
-router.get("/getProfile",verifyToken,async (req, res) => {
+router.get("/getProfile", verifyToken, async (req, res) => {
     try {
         const userId = req.userId;
         const users = await User.findById(userId);
@@ -183,6 +183,22 @@ router.put('/user/update', verifyToken, async (req, res) => {
     } catch (error) {
         console.error("Error updating user:", error.message);
         res.status(500).json({ success: false, message: "Failed to update user." });
+    }
+});
+router.delete('/user/delete', verifyToken, async (req, res) => {
+    try {
+        const userId = req.userId; // Extracted from the token during verification
+        // Find the user by ID and delete the user
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        res.status(200).json({ success: true, message: 'User deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting user:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to delete user.' });
     }
 });
 
