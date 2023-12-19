@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const ProductModel = require('../models/product');
 const CategoryModel = require('../models/category');
 const SubCategoryModel = require('../models/sub_category'); 
+const User = require("../models/user");
 const secret_key = "Rana";
 
 const verifyToken = (req, res, next) => {
@@ -92,6 +93,34 @@ router.get('/products',verifyToken, async (req, res) => {
     }
 });
 
+router.post('/addproducttouser', verifyToken, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { productId } = req.body;
 
+        // Check if the user exists
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        // Check if the product exists
+        const product = await ProductModel.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found.' });
+        }
+
+        // Add the product to the user's products array
+        user.products.push(productId);
+
+        // Save the updated user
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Product added to user successfully.' });
+    } catch (error) {
+        console.error('Error adding product to user:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to add product to user.' });
+    }
+});
 
 module.exports = router;

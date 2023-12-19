@@ -26,6 +26,13 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        products: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Product",
+                required: true,
+            },
+        ],
     },
     { timestamps: true }
 );

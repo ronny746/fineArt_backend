@@ -156,6 +156,13 @@ router.get("/getProfile", verifyToken, async (req, res) => {
     try {
         const userId = req.userId;
         const users = await User.findById(userId);
+        // const users = await User.findById(userId)
+        // .populate({
+        //     path: 'products',
+        //     populate: {
+        //         path: 'category subcategory',
+        //     },
+        // });
         res.status(200).json({ success: true, data: users });
     } catch (error) {
         console.error("Error fetching user:", error.message);

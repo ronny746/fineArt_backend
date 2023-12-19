@@ -52,5 +52,19 @@ router.get('/get-categories',verifyToken, async (req, res) => {
     }
 });
 
+router.search('/search-categories',verifyToken, async (req, res) => {
+    try {
+        const { query } = req.query;
+
+        // Perform a case-insensitive search for categories containing the query
+        const categories = await CategoryModel.find({ title: { $regex: new RegExp(query, 'i') } });
+
+        res.status(200).json({ success: true, categories });
+    } catch (error) {
+        console.error('Error searching categories:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to search categories.' });
+    }
+});
+
 module.exports = router;
 
