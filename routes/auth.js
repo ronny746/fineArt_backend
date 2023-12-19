@@ -91,7 +91,7 @@ router.post("/verify-otp", async (req, res) => {
 
         // For example, update the user's status to indicate successful verification
         user.isVerify = true;
-        user.otp = "";
+        user.otp = " ";
         await user.save();
 
         // You can also generate a JWT token and send it back to the client for authentication

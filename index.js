@@ -12,8 +12,14 @@ mongoose.connect('mongodb+srv://rohit:rana@cluster0.btddseq.mongodb.net/fineArt?
 );
 
 const authRoute = require("./routes/auth");
+const categoryRoute = require("./routes/category");
+const subcategoryRoute = require("./routes/sub_category");
+const productRoute = require("./routes/product");
 
 app.use("/api/auth", authRoute);
+app.use("/api/category", categoryRoute);
+app.use("/api/subcategory", subcategoryRoute);
+app.use("/api/product", productRoute);
 
 
 
