@@ -33,31 +33,44 @@ router.post("/register", async (req, res) => {
         // Check if user already exists with the given mobile number
         const existingUser = await User.findOne({ mobile: mobile });
 
-        if (existingUser) {
-            // User already exists, you might want to handle this case appropriately
+        if (existingUser && existingUser.isVerify == true) {
             return res.status(400).json({ success: false, message: 'User with this mobile number already exists.' });
         }
 
-
-
-
-        const user = await newUser.save();
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000);
 
         // Use Twilio to send OTP
         await client.messages.create({
             body: `Your OTP is: ${otp}`,
             from: twilioPhoneNumber,
-            to: "+91 " + mobile
+            to: '+91 ' + mobile
         })
             .then(message => {
-                const otp = Math.floor(100000 + Math.random() * 900000);
-                const newUser = new User({
-                    name: req.body.name,
-                    mobile: mobile,
-                    otp: otp
-                });
                 console.log(`OTP sent successfully! ${otp}: ${message.sid}`);
-                res.status(200).json({ success: true, message: 'OTP sent successfully.', data: user });
+
+                // If OTP is sent successfully, proceed with user registration
+                if (existingUser) {
+                    existingUser.otp = otp;
+                    return existingUser.save();
+
+                } else {
+                    const newUser = new User({
+                        name: req.body.name,
+                        mobile: mobile,
+                        otp: otp
+                    });
+
+                    return newUser.save();
+                }
+            })
+            .then(user => {
+                // User registered successfully after OTP is sent
+                res.status(200).json({
+                    success: true,
+                    message: 'OTP sent successfully. User registered.',
+                    data: { user }
+                });
             })
             .catch(error => {
                 console.error('Error sending OTP:', error.message);
@@ -84,6 +97,8 @@ router.post("/verify-otp", async (req, res) => {
         }
 
         // Check if the entered OTP matches the stored OTP
+        console.log(enteredOTP);
+        console.log(user.otp);
         if (enteredOTP !== user.otp) {
             return res.status(400).json({ success: false, message: "Invalid OTP." });
         }
@@ -197,7 +212,7 @@ router.delete('/user/delete', verifyToken, async (req, res) => {
     try {
         const userId = req.userId; // Extracted from the token during verification
         // Find the user by ID and delete the user
-        const deletedUser = await User.findByIdAndDelete("userId");
+        const deletedUser = await User.findByIdAndDelete(userId);
 
         if (!deletedUser) {
             return res.status(404).json({ success: false, message: 'User not found.' });
