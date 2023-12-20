@@ -160,7 +160,7 @@ router.post("/login", async (req, res) => {
 });
 router.get("/users", async (req, res) => {
     try {
-        const users = await User.find();
+        const users = await User.find().select('-products');
         res.status(200).json({ success: true, data: users });
     } catch (error) {
         console.error("Error fetching users:", error.message);
