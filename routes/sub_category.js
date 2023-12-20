@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const jwt = require('jsonwebtoken');
 const CategoryModel = require('../models/category');
-const SubCategoryModel = require('../models/sub_category'); 
+const SubCategoryModel = require('../models/sub_category');
 const secret_key = "Rana";
 
 // Middleware to verify the token
@@ -50,7 +50,7 @@ router.post('/add-subcategory', verifyToken, async (req, res) => {
 });
 
 
-router.get('/sub-categories',verifyToken, async (req, res) => {
+router.get('/sub-categories', verifyToken, async (req, res) => {
     try {
         const subcategories = await SubCategoryModel.find().populate('category');
 
@@ -58,6 +58,19 @@ router.get('/sub-categories',verifyToken, async (req, res) => {
     } catch (error) {
         console.error('Error fetching subcategories:', error.message);
         res.status(500).json({ success: false, message: 'Failed to fetch subcategories.' });
+    }
+});
+router.get('/subcategories-by-category/:categoryId', async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+        
+        // Find subcategories by category ID
+        const subcategories = await SubCategoryModel.find({ category: categoryId });
+
+        res.status(200).json({ success: true, subcategories });
+    } catch (error) {
+        console.error('Error fetching subcategories by category:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to fetch subcategories by category.' });
     }
 });
 
