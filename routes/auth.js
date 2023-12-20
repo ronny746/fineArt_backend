@@ -171,7 +171,7 @@ router.get("/users", async (req, res) => {
 router.get("/getProfile", verifyToken, async (req, res) => {
     try {
         const userId = req.userId;
-        const users = await User.findById(userId);
+        const users = await User.findById(userId).select('-products');
         // const users = await User.findById(userId)
         // .populate({
         //     path: 'products',
