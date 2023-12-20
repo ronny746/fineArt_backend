@@ -38,13 +38,8 @@ router.post("/register", async (req, res) => {
             return res.status(400).json({ success: false, message: 'User with this mobile number already exists.' });
         }
 
-        // User does not exist, generate OTP and create a new user
-        const otp = Math.floor(100000 + Math.random() * 900000);
-        const newUser = new User({
-            name: req.body.name,
-            mobile: mobile,
-            otp: otp
-        });
+
+
 
         const user = await newUser.save();
 
@@ -55,6 +50,12 @@ router.post("/register", async (req, res) => {
             to: "+91 " + mobile
         })
             .then(message => {
+                const otp = Math.floor(100000 + Math.random() * 900000);
+                const newUser = new User({
+                    name: req.body.name,
+                    mobile: mobile,
+                    otp: otp
+                });
                 console.log(`OTP sent successfully! ${otp}: ${message.sid}`);
                 res.status(200).json({ success: true, message: 'OTP sent successfully.', data: user });
             })
@@ -196,7 +197,7 @@ router.delete('/user/delete', verifyToken, async (req, res) => {
     try {
         const userId = req.userId; // Extracted from the token during verification
         // Find the user by ID and delete the user
-        const deletedUser = await User.findByIdAndDelete(userId);
+        const deletedUser = await User.findByIdAndDelete("userId");
 
         if (!deletedUser) {
             return res.status(404).json({ success: false, message: 'User not found.' });
