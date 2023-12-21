@@ -1,7 +1,8 @@
-
+const cors = require('cors');
 const express = require('express');
 const axios = require('axios');
 const mongoose = require("mongoose");
+app.use(cors());
 const app = express();
 app.use(express.json());
 
