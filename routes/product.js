@@ -24,7 +24,7 @@ const verifyToken = (req, res, next) => {
 };
 
 // Endpoint to add a new product (protected with token verification)
-router.post('/add-product', verifyToken, async (req, res) => {
+router.post('/add-product', async (req, res) => {
     try {
         const {
             category,
@@ -82,7 +82,7 @@ router.post('/add-product', verifyToken, async (req, res) => {
     }
 });
 
-router.get('/products',verifyToken, async (req, res) => {
+router.get('/products', async (req, res) => {
     try {
         const products = await ProductModel.find().populate('category').populate('subcategory');
 
