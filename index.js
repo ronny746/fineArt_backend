@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 const corsOptions = {
-    origin: 'http://your-flutter-web-app-domain', // replace with your Flutter web app domain
+    origin: 'http://localhost:57042', // replace with your Flutter web app domain
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204,
