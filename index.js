@@ -2,8 +2,9 @@ const cors = require('cors');
 const express = require('express');
 const axios = require('axios');
 const mongoose = require("mongoose");
-app.use(cors());
+
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 mongoose.connect('mongodb+srv://rohit:rana@cluster0.btddseq.mongodb.net/fineArt?retryWrites=true&w=majority',
