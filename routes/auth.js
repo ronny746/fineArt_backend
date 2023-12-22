@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const User = require("../models/user");
-const accountSid = 'AC608c293f7cd37e13823f6a4256a9d25f';
-const authToken = '44beca5d9038badbe863071a34b953c2';
-const twilioPhoneNumber = '+12058289919';
+const accountSid = 'AC786f30725b2eb832abe2b7dd32cfa7c7';
+const authToken = 'be1ff04fb92c7d03f240287e8c1a5fd0';
+const twilioPhoneNumber = '+14695357349';
 const jwt = require('jsonwebtoken');
 const twilio = require('twilio');
 const client = new twilio(accountSid, authToken);
