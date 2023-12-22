@@ -50,7 +50,7 @@ router.post('/add-subcategory', verifyToken, async (req, res) => {
 });
 
 
-router.get('/sub-categories', verifyToken, async (req, res) => {
+router.get('/sub-categories', async (req, res) => {
     try {
         const subcategories = await SubCategoryModel.find().populate('category');
 

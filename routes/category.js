@@ -41,7 +41,7 @@ router.post('/add-category', verifyToken, async (req, res) => {
     }
 });
 
-router.get('/get-categories',verifyToken, async (req, res) => {
+router.get('/get-categories', async (req, res) => {
     try {
         const categories = await CategoryModel.find();
 
@@ -52,7 +52,7 @@ router.get('/get-categories',verifyToken, async (req, res) => {
     }
 });
 
-router.search('/search-categories',verifyToken, async (req, res) => {
+router.search('/search-categories', async (req, res) => {
     try {
         const { query } = req.query;
 
