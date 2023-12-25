@@ -2,7 +2,7 @@ const router = require("express").Router();
 const jwt = require('jsonwebtoken');
 const ProductModel = require('../models/product');
 const CategoryModel = require('../models/category');
-const SubCategoryModel = require('../models/sub_category'); 
+const SubCategoryModel = require('../models/sub_category');
 const User = require("../models/user");
 const secret_key = "Rana";
 
@@ -122,5 +122,33 @@ router.post('/addproducttouser', verifyToken, async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to add product to user.' });
     }
 });
+router.get('/products-by-category/:categoryId', async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+        console.log(categoryId);
+        // Find products with the specified category ID
+        const products = await ProductModel.find({ category: categoryId });
+        res.status(200).json({ success: true, products });
+    } catch (error) {
+        console.error('Error fetching products by category:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to fetch products by category.' });
+    }
+});
+
+router.get('/products-by-subcategory/:subcategoryId', async (req, res) => {
+    try {
+        const subcategoryId = req.params.subcategoryId;
+        console.log(subcategoryId);
+        // Find products with the specified subcategory ID
+        const products = await ProductModel.find({subcategory: subcategoryId});
+
+        res.status(200).json({ success: true, products });
+    } catch (error) {
+        console.error('Error fetching products by subcategory:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to fetch products by subcategory.' });
+    }
+});
+
+
 
 module.exports = router;
