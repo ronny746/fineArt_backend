@@ -73,7 +73,26 @@ router.get('/subcategories-by-category/:categoryId', async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to fetch subcategories by category.' });
     }
 });
+router.delete('/delete/:subcategoryId', async (req, res) => {
+    try {
+        const subcategoryId = req.params.subcategoryId;
 
+        // Check if the subcategory exists
+        const subcategoryExists = await SubCategoryModel.findById(subcategoryId);
+
+        if (!subcategoryExists) {
+            return res.status(404).json({ success: false, message: 'Subcategory not found.' });
+        }
+
+        // Delete the subcategory
+        await SubCategoryModel.findByIdAndDelete(subcategoryId);
+
+        res.status(200).json({ success: true, message: 'Subcategory deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting subcategory:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to delete subcategory.', error: error.message });
+    }
+});
 
 module.exports = router;
 

@@ -12,7 +12,6 @@ mongoose.connect('mongodb+srv://rohit:rana@cluster0.btddseq.mongodb.net/fineArt?
 ).then(() => app.listen(3000)
 ).then(() => console.log("connected to Database and running on port 3000")
 );
-
 const authRoute = require("./routes/auth");
 const categoryRoute = require("./routes/category");
 const subcategoryRoute = require("./routes/sub_category");

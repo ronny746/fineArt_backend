@@ -218,6 +218,25 @@ router.get('/products-by-subcategory/:subcategoryId', async (req, res) => {
     }
 });
 
+router.delete('/delete/:productId', async (req, res) => {
+    try {
+        const productId = req.params.productId;
 
+        // Check if the product exists
+        const productExists = await ProductModel.findById(productId);
+
+        if (!productExists) {
+            return res.status(404).json({ success: false, message: 'Product not found.' });
+        }
+
+        // Delete the product
+        await ProductModel.findByIdAndDelete(productId);
+
+        res.status(200).json({ success: true, message: 'Product deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting product:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to delete product.', error: error.message });
+    }
+});
 
 module.exports = router;

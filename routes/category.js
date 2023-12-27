@@ -66,5 +66,27 @@ router.search('/search-categories', async (req, res) => {
     }
 });
 
+router.delete('/delete/:categoryId', async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+   
+        // Check if the category exists
+        const categoryExists = await CategoryModel.findById(categoryId);
+
+        if (!categoryExists) {
+            return res.status(404).json({ success: false, message: 'Category not found.' });
+        }
+
+        // Delete the category
+        await CategoryModel.findByIdAndDelete(categoryId);
+
+        res.status(200).json({ success: true, message: 'Category deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting category:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to delete category.', error: error.message });
+    }
+});
+
+
 module.exports = router;
 
