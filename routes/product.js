@@ -4,7 +4,76 @@ const ProductModel = require('../models/product');
 const CategoryModel = require('../models/category');
 const SubCategoryModel = require('../models/sub_category');
 const User = require("../models/user");
+const multer = require('multer');
+const xlsx = require('xlsx');
 const secret_key = "Rana";
+
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+router.post('/upload-product', upload.single('productfile'), async (req, res) => {
+    try {
+        const buffer = req.file.buffer;
+        const workbook = xlsx.read(buffer, { type: 'buffer' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const data = xlsx.utils.sheet_to_json(sheet);
+
+        // Check for duplicates based on title
+        const duplicateTitles = new Set();
+        for (const row of data) {
+            const existingProduct = await ProductModel.findOne({ title: row.title });
+            if (existingProduct) {
+                duplicateTitles.add(row.title);
+            }
+        }
+
+        if (duplicateTitles.size > 0) {
+            return res.status(400).json({ success: false, message: 'Duplicate products found.', duplicates: Array.from(duplicateTitles) });
+        }
+
+        // Process and add products to the database
+        const productPromises = data.map(async (row) => {
+            // Check if the specified category exists
+            const categoryExists = await CategoryModel.findById(row.category);
+            if (!categoryExists) {
+                throw new Error(`Category not found for product: ${row.title}`);
+            }
+
+            // Check if the specified subcategory exists
+            const subcategoryExists = await SubCategoryModel.findById(row.subcategory);
+            if (!subcategoryExists) {
+                throw new Error(`Subcategory not found for product: ${row.title}`);
+            }
+
+            const newProduct = new ProductModel({
+                category: row.category,
+                subcategory: row.subcategory,
+                title: row.title,
+                description: row.description,
+                price: row.price,
+                percentdis: row.percentdis,
+                brand: row.brand,
+                has_delivery_charge: row.has_delivery_charge,
+                delivery_charge: row.delivery_charge,
+                in_stock: row.in_stock,
+                stock_count: row.stock_count,
+                cover_image: row.cover_image,
+                images: row.images,
+                cart_count: row.cart_count,
+                wishlisted: row.wishlisted,
+            });
+
+            return newProduct.save();
+        });
+
+        const savedProducts = await Promise.all(productPromises);
+        res.status(201).json({ success: true, products: savedProducts });
+    } catch (error) {
+        console.error('Error adding products:', error);
+        res.status(500).json({ success: false, message: 'Failed to add products.', error: error.message });
+    }
+});
 
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
@@ -140,7 +209,7 @@ router.get('/products-by-subcategory/:subcategoryId', async (req, res) => {
         const subcategoryId = req.params.subcategoryId;
         console.log(subcategoryId);
         // Find products with the specified subcategory ID
-        const products = await ProductModel.find({subcategory: subcategoryId});
+        const products = await ProductModel.find({ subcategory: subcategoryId });
 
         res.status(200).json({ success: true, products });
     } catch (error) {
