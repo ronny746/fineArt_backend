@@ -7,11 +7,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://rohit:rana@cluster0.btddseq.mongodb.net/fineArt?retryWrites=true&w=majority',
-    { useUnifiedTopology: true, useNewUrlParser: true },
-).then(() => app.listen(3000)
-).then(() => console.log("connected to Database and running on port 3000")
-);
+// mongoose.connect('mongodb+srv://rohit:rana@cluster0.btddseq.mongodb.net/fineArt?retryWrites=true&w=majority',
+//     { useUnifiedTopology: true, useNewUrlParser: true },
+// ).then(() => app.listen(3000)
+// ).then(() => console.log("connected to Database and running on port 3000")
+// );
 
 const authRoute = require("./routes/auth");
 const categoryRoute = require("./routes/category");
