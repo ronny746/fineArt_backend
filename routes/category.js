@@ -2,7 +2,37 @@ const router = require("express").Router();
 const jwt = require('jsonwebtoken');
 const CategoryModel = require('../models/category'); // Adjust the path accordingly
 const secret_key = "Rana";
+const multer = require('multer');
+const xlsx = require('xlsx');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
+// POST endpoint to upload and add categories from an Excel file
+router.post('/upload-categories', upload.single('categoryFile'), async (req, res) => {
+    try {
+        const buffer = req.file.buffer;
+        const workbook = xlsx.read(buffer, { type: 'buffer' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const data = xlsx.utils.sheet_to_json(sheet);
+
+        // Process and add categories to the database
+        const categoryPromises = data.map(async (row) => {
+            const newCategory = new CategoryModel({
+                title: row.title,
+                in_navbar: row.in_navbar,
+                // Add other category fields based on your schema
+            });
+
+            return newCategory.save();
+        });
+
+        const savedCategories = await Promise.all(categoryPromises);
+        res.status(201).json({ success: true, categories: savedCategories });
+    } catch (error) {
+        console.error('Error adding categories:', error);
+        res.status(500).json({ success: false, message: 'Failed to add categories.', error: error.message });
+    }
+});
 
 // Middleware to verify the token
 const verifyToken = (req, res, next) => {
