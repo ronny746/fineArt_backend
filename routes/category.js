@@ -20,7 +20,6 @@ router.post('/upload-categories', upload.single('categoryFile'), async (req, res
             const newCategory = new CategoryModel({
                 title: row.title,
                 in_navbar: row.in_navbar,
-                // Add other category fields based on your schema
             });
 
             return newCategory.save();
